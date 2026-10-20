@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost and Found Information System | NEU</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <section id="login-page" class="login-page" aria-labelledby="login-page-title">
+        <div class="login-showcase">
+            <div class="login-brand">
+                <span class="login-brand-icon"><i class="fa-solid fa-magnifying-glass-location"></i></span>
+                <span>NEU · CICS</span>
+            </div>
+            <div class="login-welcome">
+                <p class="login-eyebrow">CAMPUS LOST &amp; FOUND</p>
+                <h1 id="login-page-title">Find what matters.<br>Return what’s found.</h1>
+                <p>Sign in with your NEU account to search campus reports, submit claims, and keep track of your activity.</p>
+            </div>
+            <div class="login-showcase-footer">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>For the NEU community</span>
+            </div>
+        </div>
+
+        <div class="login-side">
+            <div class="login-card">
+                <div class="login-mobile-brand">
+                    <i class="fa-solid fa-magnifying-glass-location"></i>
+                    <span>NEU Campus Lost &amp; Found</span>
+                </div>
+                <h2 id="auth-title">Welcome back</h2>
+                <p id="auth-subtitle" class="login-subtitle">Sign in to your NEU account to continue.</p>
+
+                <form id="login-form" onsubmit="handleLogin(event)" class="login-form">
+                    <div class="form-group">
+                        <label for="login-email">NEU email</label>
+                        <div class="login-input-wrap">
+                            <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+                            <input type="email" id="login-email" class="form-control" placeholder="you@neu.edu.ph" autocomplete="username" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="login-input-wrap">
+                            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                            <input type="password" id="login-password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+                        </div>
+                    </div>
+                    <p class="login-security-note"><i class="fa-solid fa-circle-info"></i> Use your official @neu.edu.ph account.</p>
+                    <button type="submit" class="btn btn-submit login-submit">
+                        Sign In <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <p class="login-switch">New to Campus Lost &amp; Found? <button type="button" onclick="showRegistration()">Create an account</button></p>
+                </form>
+
+                <form id="register-form" onsubmit="handleRegistration(event)" class="login-form hidden">
+                    <div class="form-group">
+                        <label for="register-name">Full name</label>
+                        <input type="text" id="register-name" class="form-control" autocomplete="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">NEU email</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="you@neu.edu.ph" autocomplete="email" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="register-role">Role</label>
+                            <select id="register-role" class="form-control" required>
+                                <option value="student">Student</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-contact">Contact number</label>
+                            <input type="tel" id="register-contact" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password (at least 8 characters)</label>
+                        <input type="password" id="register-password" class="form-control" minlength="8" autocomplete="new-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-submit login-submit">Create Account <i class="fa-solid fa-arrow-right"></i></button>
+                    <p class="login-switch">Already registered? <button type="button" onclick="showLogin()">Back to sign in</button></p>
+                </form>
+
+                <p class="login-legal">By continuing, you agree to use this service responsibly and provide accurate information.</p>
+            </div>
+            <p class="login-copyright">&copy; 2026 New Era University · Campus Lost and Found</p>
+        </div>
+    </section>
+
+    <div id="app-shell" class="hidden">
+    <!-- HEADER / NAVIGATION -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <i class="fa-solid fa-magnifying-glass-location brand-icon"></i>
+                <div>
+                    <h1 class="brand-title">Campus Lost & Found</h1>
+                    <p class="brand-subtitle">New Era University - CICS</p>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <span id="account-label" class="account-label hidden"></span>
+                <button onclick="openAuthModal()" class="btn btn-secondary nav-login" id="auth-toggle">
+                    Sign In / Register
+                </button>
+                <button onclick="signOut()" class="btn btn-secondary hidden" id="signout-button">
+                    Sign Out
+                </button>
+                <button onclick="openActivityModal()" class="btn btn-secondary nav-login hidden" id="activity-toggle">
+                    <i class="fa-solid fa-clock-rotate-left"></i> My Activity
+                </button>
+                <button onclick="toggleAdminPanel()" class="btn btn-admin hidden" id="admin-toggle">
+                    <i class="fa-solid fa-shield-halved"></i> Admin Console <span id="admin-badge" class="nav-badge hidden"></span>
+                </button>
+                <button onclick="openReportModal()" class="btn btn-primary hidden" id="report-item-button">
+                    <i class="fa-solid fa-plus"></i> Report Item
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-container">
+
+        <div id="report-notice" class="info-banner">
+            <i class="fa-solid fa-circle-info"></i>
+            <span><strong>Lost or found something?</strong> Please go to the Campus Security / Admin office so they can post the report here. You can then search the list below and submit a claim for your item.</span>
+        </div>
+
+        <!-- DASHBOARD STATISTICS -->
+        <div id="stats-section" class="hidden">
+        <div class="retention-controls">
+            <span id="stats-since" class="retention-note"></span>
+            <button type="button" onclick="resetStats()" class="btn btn-secondary">Reset stats</button>
+            <button type="button" onclick="showAllTimeStats()" class="btn btn-secondary">Show all-time</button>
+        </div>
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div>
+                    <p class="stat-label">Total Reported</p>
+                    <p id="stat-total" class="stat-value">0</p>
+                </div>
+                <div class="stat-icon icon-blue">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div>
+                    <p class="stat-label">Active Lost</p>
+                    <p id="stat-lost" class="stat-value text-red">0</p>
+                </div>
+                <div class="stat-icon icon-red">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div>
+                    <p class="stat-label">Active Found</p>
+                    <p id="stat-found" class="stat-value text-green">0</p>
+                </div>
+                <div class="stat-icon icon-green">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div>
+                    <p class="stat-label">Resolved / Claimed</p>
+                    <p id="stat-claimed" class="stat-value text-gray">0</p>
+                </div>
+                <div class="stat-icon icon-gray">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+        </section>
+
+        </div>
+
+        <!-- SEARCH AND FILTER SECTION -->
+        <section class="filter-section">
+            <div class="filter-group">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" oninput="renderItems()" placeholder="Search by item name, description, or location..." class="form-control">
+                </div>
+
+                <select id="filter-status" onchange="renderItems()" class="form-control select-control">
+                    <option value="All">All Statuses</option>
+                    <option value="Lost">Lost</option>
+                    <option value="Found">Found</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Claimed">Claimed / Resolved</option>
+                    <option value="Archived">Archived</option>
+                    <option value="Disposed">Disposed</option>
+                </select>
+
+                <select id="filter-category" onchange="renderItems()" class="form-control select-control">
+                    <option value="All">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Documents/IDs">Documents / IDs</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Keys">Keys</option>
+                    <option value="Bags">Bags</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- ITEMS GRID DISPLAY -->
+        <section>
+            <div id="items-grid" class="items-grid">
+                <p class="admin-empty">Loading items…</p>
+            </div>
+            <div id="no-results" class="no-results hidden">
+                <i class="fa-solid fa-box-open no-results-icon"></i>
+                <p>No reported items match your criteria.</p>
+            </div>
+        </section>
+
+        <section id="admin-panel" class="admin-panel hidden" aria-labelledby="admin-title">
+            <div class="admin-panel-header">
+                <div>
+                    <h2 id="admin-title">Admin / Campus Security Console</h2>
+                    <p class="admin-notice">Admin access is controlled by the role stored in the Supabase database.</p>
+                </div>
+                <button type="button" onclick="toggleAdminPanel()" class="btn btn-secondary">Close Console</button>
+            </div>
+            <div class="admin-workflow">
+                <section class="admin-section">
+                    <h3>Pending Item Reports</h3>
+                    <div id="admin-reports" class="admin-claims"></div>
+                </section>
+                <section class="admin-section">
+                    <h3>Pending Claim Requests</h3>
+                    <div id="admin-claims" class="admin-claims"></div>
+                </section>
+                <section class="admin-section">
+                    <h3>Physical Item Handling & Retention</h3>
+                    <div class="retention-controls">
+                        <label for="retention-days">Retention period</label>
+                        <select id="retention-days" class="form-control select-control">
+                            <option value="60">60 days</option>
+                            <option value="90" selected>90 days</option>
+                        </select>
+                        <button type="button" onclick="archiveEligibleItems()" class="btn btn-secondary">Archive eligible items</button>
+                    </div>
+                    <div id="admin-inventory" class="admin-claims"></div>
+                </section>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 New Era University - Campus Lost and Found Information System</p>
+        <p class="footer-sub">Prepared by IT Development Team (Pingal, Fernando, Feranil, Tolentino)</p>
+    </footer>
+    </div>
+
+    <!-- MODAL 1: REPORT ITEM FORM -->
+    <div id="report-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Report an Item</h3>
+                <button onclick="closeReportModal()" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="report-form" onsubmit="handleReportSubmit(event)" class="modal-form">
+                <div class="form-group">
+                    <label>Report Type</label>
+                    <select id="form-type" class="form-control" required>
+                        <option value="Lost">I Lost Something (Lost Item)</option>
+                        <option value="Found">I Found Something (Found Item)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Item Title</label>
+                    <input type="text" id="form-title" placeholder="e.g., Blue Tumbler, Student ID" class="form-control" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="form-category" class="form-control" required>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Documents/IDs">Documents / IDs</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Keys">Keys</option>
+                            <option value="Bags">Bags</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date and Time</label>
+                        <input type="datetime-local" id="form-date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Location (Building / Room)</label>
+                    <input type="text" id="form-location" placeholder="e.g., Main Building M415, Library 2nd Floor" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="form-description" rows="3" placeholder="Provide distinct characteristics or condition of the item..." class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="form-image-file">Photo (Optional, max 10 MB)</label>
+                    <input type="file" id="form-image-file" accept="image/*" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="form-image">Or image URL</label>
+                    <input type="url" id="form-image" placeholder="https://example.com/photo.jpg" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Details / Name</label>
+                    <input type="text" id="form-contact" placeholder="e.g., Juan Dela Cruz (09123456789)" class="form-control" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" onclick="closeReportModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-submit">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ITEM DETAILS & CLAIM WORKFLOW -->
+    <div id="detail-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="detail-title">Item Details</h3>
+                <button onclick="closeDetailModal()" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="detail-body">
+                <img id="detail-img" src="" alt="Item Image" class="detail-image">
+                
+                <div class="badge-row">
+                    <span id="detail-status" class="badge"></span>
+                    <span id="detail-category" class="badge badge-category"></span>
+                </div>
+
+                <div class="detail-meta">
+                    <p><strong><i class="fa-solid fa-location-dot"></i> Location:</strong> <span id="detail-location"></span></p>
+                    <p><strong><i class="fa-solid fa-calendar"></i> Date:</strong> <span id="detail-date"></span></p>
+                    <p><strong><i class="fa-solid fa-user"></i> Reported By:</strong> <span id="detail-contact"></span></p>
+                    <p><strong><i class="fa-solid fa-align-left"></i> Description:</strong></p>
+                    <p id="detail-description" class="detail-description-box"></p>
+                </div>
+
+                <!-- Claim Form Section -->
+                <div id="claim-section" class="claim-section">
+                    <h4>Verification & Claim Request</h4>
+                    <p class="claim-sub">To claim this item, fill in your details, describe proof of ownership (unique marks, serial number, etc.) and attach a photo of your school ID. Only admins can see your ID.</p>
+                    
+                    <form id="claim-form" onsubmit="handleClaimSubmit(event)" class="modal-form">
+                        <div class="form-group">
+                            <label for="claim-name">Full name</label>
+                            <input type="text" id="claim-name" class="form-control" autocomplete="name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="claim-student-id">School ID number</label>
+                                <input type="text" id="claim-student-id" class="form-control" placeholder="e.g., 24-12345-678" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="claim-contact">Contact number</label>
+                                <input type="tel" id="claim-contact" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="claim-proof">Proof of ownership</label>
+                            <textarea id="claim-proof" rows="2" placeholder="Describe unique features or proof of ownership..." class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="claim-id-photo">Photo of your school ID (required, max 10 MB)</label>
+                            <input type="file" id="claim-id-photo" accept="image/*" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-claim">Submit Ownership Claim</button>
+                    </form>
+                </div>
+                <p id="claim-message" class="claim-message hidden"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="activity-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>My Activity</h3>
+                <button type="button" onclick="closeActivityModal()" class="close-btn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="activity-body" class="detail-body"></div>
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
