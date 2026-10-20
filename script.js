@@ -9,7 +9,7 @@ const toItem = r => ({ id: r.id, title: r.title, type: r.type, category: r.categ
     reportedByUserId: r.reported_by_user_id, reportStatus: r.report_status, reviewedByAdminId: r.reviewed_by_admin_id,
     storageStatus: r.storage_status, archivedAt: r.archived_at });
 const toClaim = r => ({ claimId: r.claim_id, itemId: r.item_id, claimantUserId: r.claimant_user_id,
-    proofDescription: r.proof_description, status: r.status, reviewedByAdminId: r.reviewed_by_admin_id, claimDate: r.claim_date,
+    proofDescription: r.proof_description, status: r.status, reviewedByAdminId: r.reviewed_by_admin_id, claimDate: r.claim_date, reviewedAt: r.reviewed_at,
     claimantName: r.claimant_name, studentIdNumber: r.student_id_number, claimantContact: r.claimant_contact, idPhotoPath: r.id_photo_path });
 
 let users = [];
@@ -80,31 +80,24 @@ function formatItemDate(value) {
 
 function openAuthModal() {
     showLogin();
-    document.getElementById('login-page').classList.remove('hidden');
-    document.getElementById('app-shell').classList.add('hidden');
+    document.getElementById('auth-modal').classList.remove('hidden');
     document.getElementById('login-email').focus();
 }
 
 function closeAuthModal() {
-    if (currentUser) {
-        document.getElementById('login-page').classList.add('hidden');
-        document.getElementById('app-shell').classList.remove('hidden');
-        document.getElementById('login-password').value = '';
-        document.getElementById('register-password').value = '';
-    }
+    document.getElementById('auth-modal').classList.add('hidden');
+    document.getElementById('login-form').reset();
+    document.getElementById('register-form').reset();
 }
 
 function showLogin() {
-    document.getElementById('auth-title').textContent = 'Welcome back';
-    document.getElementById('auth-subtitle').textContent = 'Sign in to your NEU account to continue.';
+    document.getElementById('auth-title').textContent = 'Sign In';
     document.getElementById('login-form').classList.remove('hidden');
     document.getElementById('register-form').classList.add('hidden');
-    document.getElementById('login-email').focus();
 }
 
 function showRegistration() {
-    document.getElementById('auth-title').textContent = 'Create your account';
-    document.getElementById('auth-subtitle').textContent = 'Register with your official NEU email to get started.';
+    document.getElementById('auth-title').textContent = 'Create an Account';
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.remove('hidden');
     document.getElementById('register-name').focus();
@@ -689,9 +682,6 @@ function toast(message, type) {
 const _updateAccountControls = updateAccountControls;
 updateAccountControls = function () {
     _updateAccountControls();
-    const signedIn = Boolean(currentUser);
-    document.getElementById('login-page').classList.toggle('hidden', signedIn);
-    document.getElementById('app-shell').classList.toggle('hidden', !signedIn);
     document.getElementById('activity-toggle').classList.toggle('hidden', !currentUser || currentUser.role === 'admin');
     document.getElementById('stats-section').classList.toggle('hidden', currentUser?.role !== 'admin');
     document.getElementById('report-item-button').classList.toggle('hidden', currentUser?.role !== 'admin');
@@ -721,6 +711,7 @@ loadData = async function () {
 const _openDetailModal = openDetailModal;
 openDetailModal = function (id) {
     _openDetailModal(id);
+    renderClaimRecord(id);
     const item = items.find(e => e.id === id);
     if (currentUser) {
         document.getElementById('claim-name').value = currentUser.fullName;
@@ -881,4 +872,47 @@ async function deleteItem(itemId) {
         if (idPaths.length) await sb.storage.from('claim-ids').remove(idPaths);
     }
     if (await finishWrite(res)) toast('Item deleted.');
+}
+
+// Admin-only record of everyone who claimed this item, with their credentials
+function renderClaimRecord(itemId) {
+    const box = document.getElementById('claim-record');
+    box.replaceChildren();
+    const list = currentUser?.role === 'admin'
+        ? claims.filter(c => c.itemId === itemId && c.proofDescription !== undefined)
+            .sort((a, b) => new Date(b.claimDate) - new Date(a.claimDate))
+        : [];
+    box.classList.toggle('hidden', list.length === 0);
+    if (!list.length) return;
+    const heading = document.createElement('h4');
+    heading.textContent = 'Claim Record (admin only)';
+    box.appendChild(heading);
+    list.forEach(claim => {
+        const claimant = users.find(u => u.id === claim.claimantUserId);
+        const reviewer = users.find(u => u.id === claim.reviewedByAdminId);
+        const card = document.createElement('article');
+        card.className = 'admin-claim-card';
+        const badge = document.createElement('span');
+        badge.className = 'badge ' + ({ Pending: 'badge-review', Approved: 'badge-found', Rejected: 'badge-lost' }[claim.status] || 'badge-claimed');
+        badge.textContent = claim.status === 'Approved' ? 'Approved – item claimed by' : claim.status;
+        card.appendChild(badge);
+        const lines = [
+            ['Name', claim.claimantName || claimant?.fullName],
+            ['Email', claimant?.email],
+            ['School ID no.', claim.studentIdNumber],
+            ['Contact', claim.claimantContact || claimant?.contactNumber],
+            ['Submitted', claim.claimDate && new Date(claim.claimDate).toLocaleString()],
+            ['Reviewed', claim.reviewedAt && `${new Date(claim.reviewedAt).toLocaleString()}${reviewer ? ' by ' + reviewer.fullName : ''}`],
+            ['Proof of ownership', claim.proofDescription]
+        ];
+        lines.forEach(([label, value]) => {
+            const p = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = label + ': ';
+            p.append(strong, document.createTextNode(value || '-'));
+            card.appendChild(p);
+        });
+        if (claim.idPhotoPath) card.appendChild(createActionButton('View school ID photo', 'btn-secondary', () => viewClaimId(claim.idPhotoPath)));
+        box.appendChild(card);
+    });
 }
