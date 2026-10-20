@@ -11,92 +11,6 @@
 </head>
 <body>
 
-    <section id="login-page" class="login-page" aria-labelledby="login-page-title">
-        <div class="login-showcase">
-            <div class="login-brand">
-                <span class="login-brand-icon"><i class="fa-solid fa-magnifying-glass-location"></i></span>
-                <span>NEU · CICS</span>
-            </div>
-            <div class="login-welcome">
-                <p class="login-eyebrow">CAMPUS LOST &amp; FOUND</p>
-                <h1 id="login-page-title">Find what matters.<br>Return what’s found.</h1>
-                <p>Sign in with your NEU account to search campus reports, submit claims, and keep track of your activity.</p>
-            </div>
-            <div class="login-showcase-footer">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>For the NEU community</span>
-            </div>
-        </div>
-
-        <div class="login-side">
-            <div class="login-card">
-                <div class="login-mobile-brand">
-                    <i class="fa-solid fa-magnifying-glass-location"></i>
-                    <span>NEU Campus Lost &amp; Found</span>
-                </div>
-                <h2 id="auth-title">Welcome back</h2>
-                <p id="auth-subtitle" class="login-subtitle">Sign in to your NEU account to continue.</p>
-
-                <form id="login-form" onsubmit="handleLogin(event)" class="login-form">
-                    <div class="form-group">
-                        <label for="login-email">NEU email</label>
-                        <div class="login-input-wrap">
-                            <i class="fa-regular fa-envelope" aria-hidden="true"></i>
-                            <input type="email" id="login-email" class="form-control" placeholder="you@neu.edu.ph" autocomplete="username" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="login-password">Password</label>
-                        <div class="login-input-wrap">
-                            <i class="fa-solid fa-lock" aria-hidden="true"></i>
-                            <input type="password" id="login-password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
-                        </div>
-                    </div>
-                    <p class="login-security-note"><i class="fa-solid fa-circle-info"></i> Use your official @neu.edu.ph account.</p>
-                    <button type="submit" class="btn btn-submit login-submit">
-                        Sign In <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                    <p class="login-switch">New to Campus Lost &amp; Found? <button type="button" onclick="showRegistration()">Create an account</button></p>
-                </form>
-
-                <form id="register-form" onsubmit="handleRegistration(event)" class="login-form hidden">
-                    <div class="form-group">
-                        <label for="register-name">Full name</label>
-                        <input type="text" id="register-name" class="form-control" autocomplete="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="register-email">NEU email</label>
-                        <input type="email" id="register-email" class="form-control" placeholder="you@neu.edu.ph" autocomplete="email" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="register-role">Role</label>
-                            <select id="register-role" class="form-control" required>
-                                <option value="student">Student</option>
-                                <option value="faculty">Faculty</option>
-                                <option value="staff">Staff</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="register-contact">Contact number</label>
-                            <input type="tel" id="register-contact" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="register-password">Password (at least 8 characters)</label>
-                        <input type="password" id="register-password" class="form-control" minlength="8" autocomplete="new-password" required>
-                    </div>
-                    <button type="submit" class="btn btn-submit login-submit">Create Account <i class="fa-solid fa-arrow-right"></i></button>
-                    <p class="login-switch">Already registered? <button type="button" onclick="showLogin()">Back to sign in</button></p>
-                </form>
-
-                <p class="login-legal">By continuing, you agree to use this service responsibly and provide accurate information.</p>
-            </div>
-            <p class="login-copyright">&copy; 2026 New Era University · Campus Lost and Found</p>
-        </div>
-    </section>
-
-    <div id="app-shell" class="hidden">
     <!-- HEADER / NAVIGATION -->
     <header class="navbar">
         <div class="nav-container">
@@ -267,7 +181,6 @@
         <p>&copy; 2026 New Era University - Campus Lost and Found Information System</p>
         <p class="footer-sub">Prepared by IT Development Team (Pingal, Fernando, Feranil, Tolentino)</p>
     </footer>
-    </div>
 
     <!-- MODAL 1: REPORT ITEM FORM -->
     <div id="report-modal" class="modal-backdrop hidden">
@@ -398,6 +311,7 @@
                     </form>
                 </div>
                 <p id="claim-message" class="claim-message hidden"></p>
+                <div id="claim-record" class="claim-record hidden"></div>
             </div>
         </div>
     </div>
@@ -409,6 +323,62 @@
                 <button type="button" onclick="closeActivityModal()" class="close-btn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="activity-body" class="detail-body"></div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="auth-title">Sign In</h3>
+                <button type="button" onclick="closeAuthModal()" class="close-btn" aria-label="Close sign in"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="login-form" onsubmit="handleLogin(event)" class="modal-form">
+                <div class="form-group">
+                    <label for="login-email">NEU email</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="name@neu.edu.ph" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" autocomplete="current-password" required>
+                </div>
+                <p class="admin-notice">Use your @neu.edu.ph email. Email ownership is verified by Supabase Auth if confirmation is enabled.</p>
+                <div class="modal-actions">
+                    <button type="button" onclick="showRegistration()" class="btn btn-secondary">Create account</button>
+                    <button type="submit" class="btn btn-submit">Sign In</button>
+                </div>
+            </form>
+            <form id="register-form" onsubmit="handleRegistration(event)" class="modal-form hidden">
+                <div class="form-group">
+                    <label for="register-name">Full name</label>
+                    <input type="text" id="register-name" class="form-control" autocomplete="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">NEU email</label>
+                    <input type="email" id="register-email" class="form-control" placeholder="name@neu.edu.ph" autocomplete="email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="register-role">Role</label>
+                        <select id="register-role" class="form-control" required>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="staff">Staff</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-contact">Contact number</label>
+                        <input type="tel" id="register-contact" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password (at least 8 characters)</label>
+                    <input type="password" id="register-password" class="form-control" minlength="8" autocomplete="new-password" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="showLogin()" class="btn btn-secondary">Back to sign in</button>
+                    <button type="submit" class="btn btn-submit">Register</button>
+                </div>
+            </form>
         </div>
     </div>
 
